@@ -1,0 +1,43 @@
+{
+  "name": "passport-cloudfoundry",
+  "version": "0.1.1",
+  "description": "Cloud Foundry UAA OAuth2 authentication strategy for Passport.",
+  "author": "Raja Rao DV <rajar@vmware.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rajaraodv/passport-cloudfoundry.git"
+  },
+  "bugs": {
+    "url": "http://github.com/rajaraodv/passport-cloudfoundry/issues"
+  },
+  "main": "./lib/passport-cloudfoundry",
+  "dependencies": {
+    "pkginfo": "0.2.x",
+    "passport-oauth": "0.1.x"
+  },
+  "devDependencies": {
+    "vows": "0.6.x"
+  },
+  "scripts": {
+    "test": "NODE_PATH=lib node_modules/.bin/vows test/*-test.js"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "keywords": [
+    "passport",
+    "cloudfoundry",
+    "auth",
+    "authn",
+    "authentication",
+    "identity",
+    "oauth2",
+    "oauth 2.0"
+  ],
+  "_from": "passport-cloudfoundry",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "license": "BSD"
+}
