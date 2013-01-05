@@ -1,14 +1,19 @@
-var express = require('express')
-  , passport = require('passport')
-  , util = require('util')
-  , CloudFoundryStrategy = require('passport-cloudfoundry').Strategy;
+var express = require('express'),
+  passport = require('passport'),
+  util = require('util'),
+  CloudFoundryStrategy = require('passport-cloudfoundry').Strategy;
 
-//var CF_CLIENT_ID = "--insert-cloudfoundry-client-id-here--";
-//var CF_CLIENT_ID = "--insert-cloudfoundry-client-secret-here--";
 
-var CF_CLIENT_ID = "CFNodeLogger";
-var CF_CLIENT_SECRET = "vUspdE9hbcqh";
+var CF_CLIENT_ID = '--insert-cloudfoundry-client-id-here--';
 
+
+var CF_CLIENT_SECRET = '--insert-cloudfoundry-client-secret-here--';
+
+// Note: You should have a app.get(..) for this callback to receive callback from Cloud Foundry
+// For example: If your callback url is: https://myKoolapp.cloudfoundry.com/auth/cloudfoundry/callback
+// then, you should have a HTTP GET endpoint like: app.get('/auth/cloudfoundry/callback', callback))
+//
+var CF_CALLBACK_URL = '--insert-cloudfoundry--url--/auth/cloudfoundry/callback';
 
 
 // Passport session setup.
@@ -19,11 +24,11 @@ var CF_CLIENT_SECRET = "vUspdE9hbcqh";
 //   have a database of user records, the complete CloudFoundry profile is
 //   serialized and deserialized.
 passport.serializeUser(function(user, done) {
-  done(null, user);
+    done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+    done(null, obj);
 });
 
 
@@ -31,56 +36,74 @@ passport.deserializeUser(function(obj, done) {
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and CloudFoundry
 //   profile), and invoke a callback with a user object.
-passport.use(new CloudFoundryStrategy({
+var cfStrategy = new CloudFoundryStrategy({
     clientID: CF_CLIENT_ID,
     clientSecret: CF_CLIENT_SECRET,
-    callbackURL: "https://cfnodelogger.cloudfoundry.com/auth/cloudfoundry/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      
-      // To keep the example simple, the user's CloudFoundry profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the CloudFoundry account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
-    });
-  }
-));
+    callbackURL: CF_CALLBACK_URL
+}, function(accessToken, refreshToken, profile, done) {
 
+    // asynchronous verification, for effect...
+    process.nextTick(function() {
+
+        // To keep the example simple, the user's CloudFoundry profile is returned to
+        // represent the logged-in user.  In a typical application, you would want
+        // to associate the CloudFoundry account with a user record in your database,
+        // and return that user instead.
+        return done(null, profile);
+    });
+});
+
+passport.use(cfStrategy);
 
 
 var app = express();
 
 // configure Express
 app.configure(function() {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.logger());
-  app.use(express.cookieParser());
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.session({ secret: 'keyboard cat' }));
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'ejs');
+    app.use(express.logger());
+    app.use(express.cookieParser());
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+    app.use(express.session({
+        secret: 'keyboard cat'
+    }));
+    // Initialize Passport!  Also use passport.session() middleware, to support
+    // persistent login sessions (recommended).
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(app.router);
+    app.use(express.static(__dirname + '/public'));
 });
 
 
-app.get('/', function(req, res){
-  res.render('index', { user: req.user });
+app.get('/', function(req, res) {
+    if(!req.user) {
+        req.session.destroy();
+        req.logout();
+        cfStrategy.reset();
+        return res.redirect('/login');
+    }
+    res.render('index', {
+        user: req.user
+    });
 });
 
-app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: req.user });
+app.get('/account', ensureAuthenticated, function(req, res) {
+    res.render('account', {
+        user: req.user
+    });
 });
 
-app.get('/login', function(req, res){
-  res.render('login', { user: req.user });
+app.get('/login', function(req, res) {
+    req.session.destroy();
+    req.logout();
+    cfStrategy.reset(); //reset auth tokens
+
+    res.render('login', {
+        user: req.user
+    });
 });
 
 // GET /auth/cloudfoundry
@@ -88,27 +111,25 @@ app.get('/login', function(req, res){
 //   request.  The first step in CloudFoundry authentication will involve
 //   redirecting the user to angellist.co.  After authorization, CloudFoundry
 //   will redirect the user back to this application at /auth/angellist/callback
-app.get('/auth/cloudfoundry',
-  passport.authenticate('cloudfoundry'),
-  function(req, res){
+app.get('/auth/cloudfoundry', passport.authenticate('cloudfoundry'), function(req, res) {
     // The request will be redirected to CloudFoundry for authentication, so this
     // function will not be called.
-  });
+});
 
 // GET /auth/angellist/callback
+//   PS: This MUST match what you gave as 'callback_url' earlier
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get('/auth/cloudfoundry/callback',
-  passport.authenticate('cloudfoundry', { failureRedirect: '/login' }),
-  function(req, res) {
+app.get('/auth/cloudfoundry/callback', passport.authenticate('cloudfoundry', {
+    failureRedirect: '/login'
+}), function(req, res) {
     res.redirect('/');
-  });
+});
 
-app.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
+app.get('/logout', function(req, res) {
+    res.redirect('/login');
 });
 
 app.listen(3000);
@@ -119,7 +140,10 @@ app.listen(3000);
 //   the request is authenticated (typically via a persistent login session),
 //   the request will proceed.  Otherwise, the user will be redirected to the
 //   login page.
+
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login')
+    if(req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
 }
