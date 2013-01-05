@@ -3,10 +3,10 @@ var express = require('express'),
   util = require('util'),
   CloudFoundryStrategy = require('passport-cloudfoundry').Strategy;
 
-
+//Set Cloud Foundry app's clientID
 var CF_CLIENT_ID = '--insert-cloudfoundry-client-id-here--';
 
-
+//Set Cloud Foundry app's clientSecret
 var CF_CLIENT_SECRET = '--insert-cloudfoundry-client-secret-here--';
 
 // Note: You should have a app.get(..) for this callback to receive callback from Cloud Foundry
