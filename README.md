@@ -89,26 +89,26 @@ var CF_CALLBACK_URL = '--insert-cloudfoundry--url--/auth/cloudfoundry/callback';
 </OL>
 
 ### App Workflow
- Once the app is up and running, here is how it works:
+ Once the app is up and running, here is how it works: 
  
- *** 1. You will see login page like below (Click on 'login with Cloud Foundry' link): ***
+#### 1. You will see login page like below (Click on 'Login with Cloud Foundry' link): ####
  <p align='center'>
-<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page1.png" height="300px" width="450px" />
+<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page1.png" height="400px" width="550px" />
 </p>
 
- *** 2. Your browser will be redirected to https://login.cloudfoundry.com/login: ***
+####2. Your browser will be redirected to https://login.cloudfoundry.com/login: ####
  <p align='center'>
-<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page2.png" height="300px" width="450px" />
+<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page2.png" height="400px" width="550px" />
 </p>
 
- *** 3. Signin using your cloudfoundry.com account & you will see ***
+####3. If you Sign-in using your cloudfoundry.com account, you will see ####
  <p align='center'>
-<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page3.png" height="300px" width="450px" />
+<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page3.png" height="400px" width="550px" />
 </p>
 
- *** 4. If you Approve, browser will redirect you to your app w/ access_token & user info. And you will see: ***
+#### 4. If you Approve, browser will redirect you to your app w/ access_token & user info. And you will see: ####
  <p align='center'>
-<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page4.png" height="300px" width="450px" />
+<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page4.png" height="400px" width="550px" />
 </p>
 
 ------
