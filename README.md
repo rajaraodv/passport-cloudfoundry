@@ -16,22 +16,42 @@ account and OAuth 2.0 tokens.  The strategy requires a `verify` callback, which
 accepts these credentials and calls `done` providing a user, as well as
 `options` specifying a client ID, client secret, and callback URL.
 
-    passport.use(new CloudFoundryStrategy({
-        clientID: CF_CLIENT_ID,
-        clientSecret: CF_CLIENT_SECRET,
-        callbackURL: "http://127.0.0.1:3000/auth/cloudfoundry/callback"
-      },
-      function(accessToken, refreshToken, profile, done) {
-        User.findOrCreate({ email: profile.user }, function (err, user) {
-          return done(err, user);
-        });
-      }
-    ));
+```javascript
 
-#### Authenticate Requests
+var cfStrategy = new CloudFoundryStrategy({
+    clientID: CF_CLIENT_ID,
+    clientSecret: CF_CLIENT_SECRET,
+    callbackURL: CF_CALLBACK_URL
+}, function(accessToken, refreshToken, profile, done) { //verify callback
+    // asynchronous verification, for effect...
+    process.nextTick(function() {
+    
+        // To keep the example simple, the user's CloudFoundry profile is returned to
+        // represent the logged-in user.  In a typical application, you would want
+        // to associate the CloudFoundry account with a user record in your database,
+        // and return that user instead.
+        return done(null, profile);
+    });
+});
 
-Use `passport.authenticate()`, specifying the `'cloudfoundry'` strategy, to
-authenticate requests.
+passport.use(cfStrategy); //pass the strategy
+
+#### Express middlewares
+In Express apps, you need to add the below middlewares. Also make sure to add them after Express' session middleware
+
+```javascript
+// Initialize Passport!  Also use passport.session() middleware, to support
+// persistent login sessions (recommended).
+    app.use(passport.initialize());
+    app.use(passport.session());
+```    
+
+#### Express routes
+
+For passport to work, you need to add two routes. 
+1.   `app.get('/auth/cloudfoundry'… ` to start OAuth
+2.   ` app.get('/auth/cloudfoundry/callback'…` to receive OAuth callback back from Cloud Foundry.
+    * NOTE: This must match your callback url's path that you used to register the app.
 
 For example, as route middleware in an [Express](http://expressjs.com/)
 application:
@@ -49,6 +69,26 @@ application:
         // Successful authentication, redirect home.
         res.redirect('/');
       });
+
+#### Logging out
+To logout, call `req.logout()` AND `cfStrategy.reset()` like below:
+
+```
+app.get('/', function(req, res) {
+    if(!req.user) {
+        req.session.destroy();
+        req.logout();
+        cfStrategy.reset(); //required!
+        
+        return res.redirect('/login');
+    }
+    res.render('index', {
+        user: req.user
+    });
+});
+``` 
+
+
 
 -----
 
