@@ -35,8 +35,10 @@ var cfStrategy = new CloudFoundryStrategy({
     });
 });
 
+//****************************************
+// Examples 2 (w/ 'state' parameter):
+//****************************************
 
-Examples 2 (w/ 'state' parameter):
 var CloudFoundryStrategy = require('passport-cloudfoundry').Strategy;
 var cfStrategy = new CloudFoundryStrategy({
     clientID: '123-456-789',
@@ -57,7 +59,7 @@ var cfStrategy = new CloudFoundryStrategy({
   });
 
 
- Set a callback to generate 'state' value.
+ // Set a callback to generate 'state' value.
  cfStrategy.setStateParamCallBack(generateState);
 
  Where.. 'generateState' generates new state and stores is somwhere
@@ -67,13 +69,13 @@ var cfStrategy = new CloudFoundryStrategy({
  var states = {};
 
  // Generates a random value to be used as 'state' param during authorization
-    function generateStateParam() {
-       var state = uuid.v4();
-        states[state] = true;
-        return state;
-    }
- *
- Finally, in your 'finalCallback',check if that state exists
+  function generateStateParam() {
+    var state = uuid.v4();
+    states[state] = true;
+    return state;
+  }
+
+ // Finally, in your 'finalCallback',check if that state exists
  if(req.query.state && states[req.query.state]) {
    done(null, user);
    //delete it from memory
@@ -82,7 +84,8 @@ var cfStrategy = new CloudFoundryStrategy({
    done({"error": 'state value didn't match. possible CSRF?'})
  }
 
- passport.use(cfStrategy); //pass the strategy
+ // Pass the strategy
+ passport.use(cfStrategy);
 
 
 ```
