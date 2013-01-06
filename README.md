@@ -110,6 +110,8 @@ For passport to work, you need to add two routes.
 For example, as route middleware in an [Express](http://expressjs.com/)
 application:
 
+```javascript
+
     app.get('/auth/cloudfoundry',
       passport.authenticate('cloudfoundry'),
       function(req, res){
@@ -131,11 +133,12 @@ application:
         // The request will be redirected to CloudFoundry for authentication, so
         // this function will not be called.
       });
+```
 
 #### Logging out
 To logout, call `req.logout()` AND `cfStrategy.reset()` like below:
 
-```
+```javascript
 app.get('/', function(req, res) {
     if(!req.user) {
         req.session.destroy();
