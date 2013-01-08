@@ -3,6 +3,10 @@
 [Passport](https://github.com/jaredhanson/passport) strategy for authenticating
 with [Cloud Foundry open PaaS](http://cloudfoundry.org/) using the OAuth 2.0 API.
 
+ <p align='center'>
+<img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page3.png" height="400px" />
+</p>
+
 ## Installation
 
     $ npm install passport-cloudfoundry
