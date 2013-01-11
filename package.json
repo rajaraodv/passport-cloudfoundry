@@ -1,6 +1,6 @@
 {
   "name": "passport-cloudfoundry",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Cloud Foundry UAA OAuth2 authentication strategy for Passport.",
   "author": "Raja Rao DV <rajar@vmware.com>",
   "repository": {

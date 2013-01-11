@@ -204,7 +204,7 @@ var CF_CALLBACK_URL = '--insert-cloudfoundry--url--/auth/cloudfoundry/callback';
 <img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page1.png" height="400px" width="550px" />
 </p>
 
-####2. Your browser will be redirected to https://uaa.cloudfoundry.com/login (default auth url): ####
+####2. Your browser will be redirected to https://login.cloudfoundry.com/login (default auth url): ####
  <p align='center'>
 <img src="https://github.com/rajaraodv/passport-cloudfoundry/raw/master/examples/login/pics/page2.png" height="400px" width="550px" />
 </p>
